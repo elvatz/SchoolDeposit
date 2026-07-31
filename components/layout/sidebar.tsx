@@ -13,6 +13,7 @@ import {
 import { NAV_ITEMS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { SealMark } from "@/components/layout/seal-mark";
+import { useAuth } from "@/components/providers";
 
 const ICONS = {
   LayoutDashboard,
@@ -25,6 +26,11 @@ const ICONS = {
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { role } = useAuth();
+  const visibleItems =
+    role === "guest"
+      ? NAV_ITEMS.filter((item) => item.href === "/dashboard" || item.href === "/reports")
+      : NAV_ITEMS;
 
   return (
     <aside className="hidden w-64 shrink-0 flex-col border-r border-border bg-ledger text-ledger-foreground lg:flex">
@@ -36,7 +42,7 @@ export function Sidebar() {
         </div>
       </div>
       <nav className="flex-1 space-y-1 px-3 py-4">
-        {NAV_ITEMS.map((item) => {
+        {visibleItems.map((item) => {
           const Icon = ICONS[item.icon];
           const active = pathname === item.href || pathname?.startsWith(item.href + "/");
           return (

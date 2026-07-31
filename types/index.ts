@@ -1,5 +1,6 @@
 export type Account = "Tabungan" | "Kas";
 export type TransactionType = "Deposit" | "Withdrawal" | "Belanja";
+export type AuthRole = "admin" | "guest";
 
 export interface Student {
   id: string;

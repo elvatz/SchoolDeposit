@@ -1,16 +1,26 @@
 "use client";
 
 import * as React from "react";
-import { CheckCircle2, XCircle, RefreshCw } from "lucide-react";
+import { CheckCircle2, XCircle, RefreshCw, ShieldCheck } from "lucide-react";
 import { TopNav } from "@/components/layout/topnav";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { reportsService } from "@/services/reports.service";
+import { useAuth } from "@/components/providers";
 
 export default function SettingsPage() {
   const [status, setStatus] = React.useState<"idle" | "checking" | "ok" | "error">("idle");
   const [errorMessage, setErrorMessage] = React.useState<string>("");
+  const [passwordDraft, setPasswordDraft] = React.useState("");
+  const [saveMessage, setSaveMessage] = React.useState("");
+  const { adminPassword, setAdminPassword } = useAuth();
+
+  React.useEffect(() => {
+    setPasswordDraft(adminPassword);
+  }, [adminPassword]);
 
   const testConnection = async () => {
     setStatus("checking");
@@ -21,6 +31,16 @@ export default function SettingsPage() {
       setStatus("error");
       setErrorMessage(err instanceof Error ? err.message : "Gagal terhubung");
     }
+  };
+
+  const saveAdminPassword = () => {
+    const nextPassword = passwordDraft.trim();
+    if (!nextPassword) {
+      setSaveMessage("Password admin tidak boleh kosong.");
+      return;
+    }
+    setAdminPassword(nextPassword);
+    setSaveMessage("Password admin berhasil disimpan.");
   };
 
   return (
@@ -60,6 +80,35 @@ export default function SettingsPage() {
                 <XCircle className="h-4 w-4" /> {errorMessage}
               </p>
             )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="font-display text-base text-foreground">Pengaturan Admin</CardTitle>
+            <CardDescription>
+              Password admin dipakai untuk login dan disimpan secara lokal di browser. Default
+              bawaan dari file konfigurasi JSON adalah <span className="font-semibold">5akhinaraM!</span>.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="space-y-2">
+              <Label htmlFor="admin-password">Password Admin</Label>
+              <Input
+                id="admin-password"
+                type="password"
+                value={passwordDraft}
+                onChange={(event) => setPasswordDraft(event.target.value)}
+                placeholder="Masukkan password admin"
+              />
+            </div>
+            <div className="flex flex-wrap items-center gap-3">
+              <Button variant="outline" onClick={saveAdminPassword}>
+                <ShieldCheck className="h-4 w-4" />
+                Simpan Password
+              </Button>
+              {saveMessage && <p className="text-sm text-primary">{saveMessage}</p>}
+            </div>
           </CardContent>
         </Card>
 
