@@ -40,7 +40,7 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-2">
-          <CardTitle className="font-display text-2xl">Masuk ke Aplikasi</CardTitle>
+          <CardTitle className="font-display text-2xl">Aplikasi Kas Kelas</CardTitle>
           <CardDescription>
             Masuk sebagai admin dengan password, atau lanjutkan sebagai tamu dengan akses terbatas.
           </CardDescription>
