@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Spinner } from "@/components/ui/spinner";
 import {
   Select,
   SelectContent,
@@ -59,6 +60,7 @@ export function TransactionForm() {
   const isDeposit = transactionType === "Deposit";
   const isBelanja = transactionType === "Belanja";
   const isWithdrawal = transactionType === "Withdrawal";
+  const isSaving = createEntry.isPending;
 
   // Account is dictated by the transaction type: Withdrawal always draws
   // from Tabungan (personal savings), Belanja always draws from Kas
@@ -106,7 +108,8 @@ export function TransactionForm() {
         <CardTitle className="font-display text-base text-foreground">Catat Transaksi Baru</CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" aria-busy={isSaving}>
+          <fieldset disabled={isSaving} className="space-y-5">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label>Jenis Transaksi</Label>
@@ -302,9 +305,17 @@ export function TransactionForm() {
             </div>
           )}
 
-          <Button type="submit" disabled={createEntry.isPending} className="w-full sm:w-auto">
-            {createEntry.isPending ? "Menyimpan..." : "Simpan Transaksi"}
+          <Button type="submit" disabled={isSaving} className="w-full sm:w-auto">
+            {isSaving ? (
+              <>
+                <Spinner className="h-4 w-4" />
+                Menyimpan...
+              </>
+            ) : (
+              "Simpan Transaksi"
+            )}
           </Button>
+          </fieldset>
         </form>
       </CardContent>
     </Card>
