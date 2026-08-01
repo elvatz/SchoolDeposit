@@ -13,21 +13,21 @@ export default function ReportsPage() {
         <Tabs defaultValue="summary">
           <TabsList>
             <TabsTrigger value="summary">Ringkasan &amp; Bulanan</TabsTrigger>
-            <TabsTrigger value="student">Per Siswa</TabsTrigger>
             <TabsTrigger value="matrix">Iuran Bulanan</TabsTrigger>
             <TabsTrigger value="expense">Laporan Belanja</TabsTrigger>
+            <TabsTrigger value="student">Laporan Per Siswa</TabsTrigger>
           </TabsList>
           <TabsContent value="summary">
             <SummaryReportTab />
-          </TabsContent>
-          <TabsContent value="student">
-            <StudentReportTab />
           </TabsContent>
           <TabsContent value="matrix">
             <MonthlyMatrixTab />
           </TabsContent>
           <TabsContent value="expense">
             <ExpenseReportTab />
+          </TabsContent>
+          <TabsContent value="student">
+            <StudentReportTab />
           </TabsContent>
         </Tabs>
       </div>

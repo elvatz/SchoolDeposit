@@ -1,10 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { Wallet } from "lucide-react";
+import { FileSpreadsheet, Wallet } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -42,6 +43,26 @@ export function ExpenseReportTab() {
 
   const totalBelanja = expenseEntries.reduce((sum, entry) => sum + entry.amount, 0);
 
+  const exportExcel = async () => {
+    if (!expenseEntries.length) return;
+    const XLSX = await import("xlsx");
+    const rows = expenseEntries.map((entry) => ({
+      Tanggal: formatDate(entry.date),
+      Keterangan: entry.description || "-",
+      Jumlah: entry.amount,
+    }));
+    rows.push({
+      Tanggal: "TOTAL",
+      Keterangan: "-",
+      Jumlah: totalBelanja,
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(rows);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Laporan Belanja");
+    XLSX.writeFile(workbook, "laporan-belanja.xlsx");
+  };
+
   return (
     <div className="space-y-4">
       <Card>
@@ -55,9 +76,14 @@ export function ExpenseReportTab() {
             }}
           />
 
-          <div className="rounded-md border border-border bg-secondary/40 px-4 py-3 text-sm">
-            <span className="text-muted-foreground">Total Pengeluaran:</span>{" "}
-            <span className="font-semibold text-foreground">{formatCurrency(totalBelanja)}</span>
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="rounded-md border border-border bg-secondary/40 px-4 py-3 text-sm">
+              <span className="text-muted-foreground">Total Pengeluaran:</span>{" "}
+              <span className="font-semibold text-foreground">{formatCurrency(totalBelanja)}</span>
+            </div>
+            <Button variant="outline" onClick={exportExcel} disabled={!expenseEntries.length}>
+              <FileSpreadsheet className="h-4 w-4" /> Excel
+            </Button>
           </div>
         </CardContent>
       </Card>
