@@ -36,8 +36,19 @@ export async function exportLedgerToExcel(entries: LedgerEntry[], filename = "bu
     Nominal: e.amount,
     Keterangan: e.description,
   }));
+
   const worksheet = XLSX.utils.json_to_sheet(rows);
   const workbook = XLSX.utils.book_new();
+
+  worksheet["!cols"] = [
+    { wch: 14 },
+    { wch: 24 },
+    { wch: 14 },
+    { wch: 16 },
+    { wch: 16 },
+    { wch: 40 },
+  ];
+
   XLSX.utils.book_append_sheet(workbook, worksheet, "Buku Besar");
   XLSX.writeFile(workbook, filename);
 }

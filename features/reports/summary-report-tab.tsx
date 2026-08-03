@@ -1,14 +1,16 @@
 "use client";
 
 import * as React from "react";
-import { FileDown, FileSpreadsheet, Printer } from "lucide-react";
+import { FileSpreadsheet } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { MonthYearFilter } from "@/features/reports/month-year-filter";
 import { SummaryReportCard } from "@/features/reports/summary-report-card";
 import { useMonthlySummary } from "@/hooks/use-reports";
 import { useLedger } from "@/hooks/use-ledger";
-import { exportLedgerToExcel, exportLedgerToPdf } from "@/lib/export";
+import { exportLedgerToExcel } from "@/lib/export";
 import { monthName } from "@/lib/utils";
 
 function dateRangeFor(month?: number, year?: number) {
@@ -24,10 +26,18 @@ function dateRangeFor(month?: number, year?: number) {
 export function SummaryReportTab() {
   const [month, setMonth] = React.useState<number | undefined>();
   const [year, setYear] = React.useState<number | undefined>();
+  const [startDate, setStartDate] = React.useState<string>("");
+  const [endDate, setEndDate] = React.useState<string>("");
 
   const { data: summary, isLoading } = useMonthlySummary(month, year);
-  const { startDate, endDate } = dateRangeFor(month, year);
-  const { data: ledgerData } = useLedger({ startDate, endDate, page: 1, pageSize: 10000 });
+  const { data: ledgerData } = useLedger({
+    startDate: startDate || undefined,
+    endDate: endDate || undefined,
+    page: 1,
+    pageSize: 10000,
+    sortBy: "date",
+    sortDir: "desc",
+  });
 
   const title =
     month && year ? `Laporan Bulanan - ${monthName(month)} ${year}` : "Laporan Ringkasan";
@@ -35,38 +45,44 @@ export function SummaryReportTab() {
   return (
     <div className="space-y-4">
       <Card>
-        <CardContent className="flex flex-col gap-4 pt-5 sm:flex-row sm:items-center sm:justify-between">
-          <MonthYearFilter
-            month={month}
-            year={year}
-            onChange={(m, y) => {
-              setMonth(m);
-              setYear(y);
-            }}
-          />
+        <CardContent className="flex flex-col gap-4 pt-5 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end">
+            <MonthYearFilter
+              month={month}
+              year={year}
+              onChange={(m, y) => {
+                setMonth(m);
+                setYear(y);
+              }}
+            />
+
+            <div className="flex flex-wrap gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-xs font-medium text-muted-foreground">Range Tanggal Awal</Label>
+                <Input
+                  type="date"
+                  value={startDate}
+                  onChange={(event) => setStartDate(event.target.value)}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-medium text-muted-foreground">Range Tanggal Akhir</Label>
+                <Input
+                  type="date"
+                  value={endDate}
+                  onChange={(event) => setEndDate(event.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+
           <div className="flex flex-wrap gap-2">
             <Button
               variant="outline"
               disabled={!ledgerData?.data.length}
-              onClick={() =>
-                ledgerData &&
-                exportLedgerToPdf(ledgerData.data, title, `${title.toLowerCase().replace(/\s+/g, "-")}.pdf`)
-              }
+              onClick={() => ledgerData && exportLedgerToExcel(ledgerData.data, "buku-besar.xlsx")}
             >
-              <FileDown className="h-4 w-4" /> PDF
-            </Button>
-            <Button
-              variant="outline"
-              disabled={!ledgerData?.data.length}
-              onClick={() =>
-                ledgerData &&
-                exportLedgerToExcel(ledgerData.data, `${title.toLowerCase().replace(/\s+/g, "-")}.xlsx`)
-              }
-            >
-              <FileSpreadsheet className="h-4 w-4" /> Excel
-            </Button>
-            <Button variant="outline" onClick={() => window.print()}>
-              <Printer className="h-4 w-4" /> Print
+              <FileSpreadsheet className="h-4 w-4" /> Buku Besar Excel
             </Button>
           </div>
         </CardContent>

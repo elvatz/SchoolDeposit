@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, Download } from "lucide-react";
+import { Search, FileSpreadsheet } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,10 +16,10 @@ import type { LedgerFilters } from "@/types";
 interface LedgerFilterBarProps {
   filters: LedgerFilters;
   onChange: (filters: LedgerFilters) => void;
-  onExportCsv: () => void;
+  onExportExcel: () => void;
 }
 
-export function LedgerFilterBar({ filters, onChange, onExportCsv }: LedgerFilterBarProps) {
+export function LedgerFilterBar({ filters, onChange, onExportExcel }: LedgerFilterBarProps) {
   const { data: students = [] } = useStudents();
 
   return (
@@ -82,8 +82,8 @@ export function LedgerFilterBar({ filters, onChange, onExportCsv }: LedgerFilter
         </div>
       </div>
 
-      <Button variant="outline" onClick={onExportCsv}>
-        <Download className="h-4 w-4" /> Export CSV
+      <Button variant="outline" className="w-full sm:w-auto lg:flex-shrink-0" onClick={onExportExcel}>
+        <FileSpreadsheet className="h-4 w-4" /> Export Excel
       </Button>
     </div>
   );

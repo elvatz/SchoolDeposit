@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { LedgerFilterBar } from "@/features/ledger/ledger-filter-bar";
 import { LedgerTable } from "@/features/ledger/ledger-table";
 import { useLedger } from "@/hooks/use-ledger";
-import { exportLedgerToCsv } from "@/lib/export";
+import { exportLedgerToExcel } from "@/lib/export";
 import { DEFAULT_PAGE_SIZE } from "@/lib/constants";
 import type { LedgerFilters } from "@/types";
 
@@ -20,6 +20,7 @@ export default function LedgerPage() {
   });
 
   const { data, isLoading } = useLedger(filters);
+  const { data: exportData } = useLedger({ ...filters, page: 1, pageSize: 10000 });
 
   return (
     <div className="pb-10">
@@ -30,7 +31,7 @@ export default function LedgerPage() {
             <LedgerFilterBar
               filters={filters}
               onChange={setFilters}
-              onExportCsv={() => data && exportLedgerToCsv(data.data)}
+              onExportExcel={() => exportData && exportLedgerToExcel(exportData.data, "buku-besar.xlsx")}
             />
           </CardContent>
         </Card>
