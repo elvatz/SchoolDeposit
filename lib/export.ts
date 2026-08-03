@@ -1,4 +1,4 @@
-import type { LedgerEntry } from "@/types";
+import type { LedgerEntry, LedgerEntryWithBalance } from "@/types";
 import { formatDate } from "@/lib/utils";
 
 function downloadBlob(blob: Blob, filename: string) {
@@ -26,16 +26,54 @@ export function exportLedgerToCsv(entries: LedgerEntry[], filename = "buku-besar
   downloadBlob(new Blob([csv], { type: "text/csv;charset=utf-8;" }), filename);
 }
 
-export async function exportLedgerToExcel(entries: LedgerEntry[], filename = "buku-besar.xlsx") {
+export async function exportLedgerToExcel(
+  entries: Array<LedgerEntry | LedgerEntryWithBalance>,
+  filename = "buku-besar.xlsx"
+) {
   const XLSX = await import("xlsx");
-  const rows = entries.map((e) => ({
-    Tanggal: formatDate(e.date),
-    Siswa: e.studentName,
-    Account: e.account,
-    Jenis: e.transactionType,
-    Nominal: e.amount,
-    Keterangan: e.description,
-  }));
+
+  const rows: Array<Record<string, string | number>> = entries.map((entry) => {
+    const hasBalance = "debit" in entry && "credit" in entry && "runningBalance" in entry;
+    const debit = hasBalance ? entry.debit : entry.transactionType === "Deposit" ? entry.amount : 0;
+    const credit = hasBalance
+      ? entry.credit
+      : entry.transactionType === "Withdrawal" || entry.transactionType === "Belanja"
+        ? entry.amount
+        : 0;
+    const runningBalance = hasBalance ? entry.runningBalance : 0;
+
+    return {
+      Tanggal: formatDate(entry.date),
+      Siswa: entry.studentName,
+      Account: entry.account,
+      Jenis: entry.transactionType,
+      Debit: debit,
+      Kredit: credit,
+      Saldo: runningBalance,
+      Keterangan: entry.description,
+    };
+  });
+
+  let totalDebit = 0;
+  let totalCredit = 0;
+  let totalSaldo = 0;
+
+  for (const row of rows) {
+    totalDebit += Number(row.Debit ?? 0);
+    totalCredit += Number(row.Kredit ?? 0);
+    totalSaldo = Number(row.Saldo ?? 0);
+  }
+
+  rows.push({
+    Tanggal: "TOTAL",
+    Siswa: "",
+    Account: "",
+    Jenis: "",
+    Debit: totalDebit,
+    Kredit: totalCredit,
+    Saldo: totalSaldo,
+    Keterangan: "",
+  });
 
   const worksheet = XLSX.utils.json_to_sheet(rows);
   const workbook = XLSX.utils.book_new();
@@ -44,6 +82,8 @@ export async function exportLedgerToExcel(entries: LedgerEntry[], filename = "bu
     { wch: 14 },
     { wch: 24 },
     { wch: 14 },
+    { wch: 16 },
+    { wch: 16 },
     { wch: 16 },
     { wch: 16 },
     { wch: 40 },

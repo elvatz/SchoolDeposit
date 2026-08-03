@@ -36,7 +36,7 @@ export function SummaryReportTab() {
     page: 1,
     pageSize: 10000,
     sortBy: "date",
-    sortDir: "desc",
+    sortDir: "asc",
   });
 
   const title =
