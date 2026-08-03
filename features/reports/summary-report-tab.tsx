@@ -47,14 +47,7 @@ export function SummaryReportTab() {
       <Card>
         <CardContent className="flex flex-col gap-4 pt-5 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end">
-            <MonthYearFilter
-              month={month}
-              year={year}
-              onChange={(m, y) => {
-                setMonth(m);
-                setYear(y);
-              }}
-            />
+        
 
             <div className="flex flex-wrap gap-3">
               <div className="space-y-1.5">
