@@ -1,112 +1,107 @@
-# Kas & Tabungan Siswa
+```markdown
+# School Cash & Deposit
 
-Aplikasi web untuk mengelola tabungan siswa, kas kelas, dan pengeluaran,
-dengan seluruh transaksi tercatat dalam satu **Buku Besar (General Ledger)**
-sehingga semua laporan berasal dari satu sumber data.
+A web application for managing student savings, class cash funds, and expenses, with all transactions recorded in a single **General Ledger** so that all reports originate from a single source of truth.
 
-Dibangun dengan **Next.js 15 (App Router)**, **TypeScript**, **TailwindCSS**,
-**shadcn/ui-style components**, **TanStack Query**, **React Hook Form + Zod**,
-dan **Google Spreadsheet** (via Google Apps Script) sebagai database — tanpa
-database tradisional seperti MySQL/PostgreSQL.
+Built with **Next.js 15 (App Router)**, **TypeScript**, **TailwindCSS**, **shadcn/ui-style components**, **TanStack Query**, **React Hook Form + Zod**, and **Google Spreadsheets** (via Google Apps Script) as the database—freeing the project from traditional databases like MySQL/PostgreSQL.
 
-## Fitur
+---
 
-- **Dashboard** — total siswa, total tabungan, total kas, total penarikan,
-  total belanja, total saldo, grafik ringkasan, dan transaksi terbaru
-  (auto-refresh).
-- **Siswa** — CRUD data siswa (NIS, nama, kelas) dengan pencarian.
-- **Transaksi** — pilih **Jenis Transaksi** terlebih dahulu (Deposit /
-  Withdrawal / Belanja), lalu field lain menyesuaikan otomatis:
-  - **Deposit** — bisa ke Tabungan atau Kas, wajib pilih siswa yang menyetor.
-    Setiap Deposit dikaitkan ke satu atau lebih **periode iuran** (bulan +
-    tahun) — kalau setor sekaligus untuk beberapa bulan (mis. Rp500.000
-    untuk 5 bulan), tinggal klik "+ Tambah Bulan" dan nominalnya otomatis
-    terbagi rata per bulan, tercatat sebagai baris terpisah di Buku Besar.
-  - **Withdrawal** — akun otomatis terkunci ke **Tabungan** (saldo pribadi
-    siswa), wajib pilih siswa, dan tidak boleh melebihi saldo Tabungan
-    siswa tersebut.
-  - **Belanja** — akun otomatis terkunci ke **Kas** (pengeluaran kas kelas,
-    mis. beli alat kebersihan), **tidak** dikaitkan ke siswa manapun karena
-    Kas adalah dana bersama, dan tidak boleh melebihi total saldo Kas
-    gabungan seluruh siswa.
-- **Buku Besar** — seluruh transaksi dengan kolom Debit/Credit/Saldo Berjalan
-  (running balance dihitung realtime, bukan disimpan), pencarian, filter
-  tanggal/siswa/akun, sorting, pagination, dan export CSV.
-- **Buku Besar per Siswa** — saldo Tabungan & Kas per siswa beserta riwayat
-  transaksinya.
-- **Laporan** — ringkasan total, laporan bulanan (filter bulan/tahun), laporan
-  per siswa, dan **Iuran Bulanan** (matriks siswa × bulan seperti rekap kas
-  kelas manual, terpisah untuk Tabungan dan Kas, rentang bulan bebas
-  dipilih) — masing-masing bisa diexport ke PDF/CSV/Excel/print.
-- **Pengaturan** — status koneksi ke Google Apps Script.
-- **Dark mode**, skeleton loading, empty state, toast notification, dan
-  confirmation dialog sebelum delete.
+## 🚀 Features
 
-## Struktur Folder
+- **Dashboard** — Total students, total savings, total cash, total withdrawals, total expenses, total balance, summary charts, and recent transactions (auto-refresh).
+- **Students** — Student data CRUD (NIS/Student ID, name, class) with search functionality.
+- **Transactions** — Select the **Transaction Type** first (Deposit / Withdrawal / Expense), and the remaining fields adapt automatically:
+  - **Deposit** — Can go to Savings or Cash, requires selecting a student. Each deposit is linked to one or more **contribution periods** (month + year). If depositing for multiple months simultaneously (e.g., Rp500,000 for 5 months), simply click "+ Add Month" and the amount splits evenly per month, recorded as separate rows in the General Ledger.
+  - **Withdrawal** — Account automatically locks to **Savings** (student's personal balance), requires selecting a student, and cannot exceed that student's Savings balance.
+  - **Expense** — Account automatically locks to **Cash** (class cash expenses, e.g., cleaning supplies), is **not** linked to any student since Cash is shared funds, and cannot exceed the total combined Cash balance across all students.
+- **General Ledger** — Complete transaction history featuring Debit/Credit/Running Balance columns (calculated in real-time rather than stored), search, filters by date/student/account, sorting, pagination, and CSV export.
+- **Per-Student Ledger** — Individual Savings & Cash balances per student along with their specific transaction history.
+- **Reports** — Total summaries, monthly reports (filtered by month/year), per-student reports, and **Monthly Dues** (a student × month matrix similar to traditional manual class cash logs, separated for Savings and Cash, with a flexible month range selector) — each exportable to PDF, CSV, Excel, or printable.
+- **Settings** — Google Apps Script connection status checker.
+- **UX Polish** — Dark mode, skeleton loading, empty states, toast notifications, and confirmation dialogs before deletion.
+
+---
+
+## 📁 Folder Structure
+
+```text
+app/               Next.js App Router routing (page per feature)
+components/        Reusable UI components (primitives + layout)
+features/          Feature-specific components (dashboard, students, etc.)
+hooks/             Custom hooks (TanStack Query per entity)
+lib/               Utilities, Zod validation, constants, export helpers
+services/          Repository pattern — communication with Google Apps Script API
+types/             Shared TypeScript types
+google-apps-script/ Backend code (Code.gs) to deploy to Apps Script
+docs/              Spreadsheet/Apps Script setup guide and Vercel deployment instructions
 
 ```
-app/            Routing Next.js App Router (halaman per fitur)
-components/     Komponen UI reusable (primitives + layout)
-features/       Komponen spesifik per fitur (dashboard, students, dst.)
-hooks/          Custom hooks (TanStack Query per entitas)
-lib/            Utilities, validasi Zod, konstanta, export helpers
-services/       Repository pattern — komunikasi ke Google Apps Script API
-types/          TypeScript types bersama
-google-apps-script/  Kode backend (Code.gs) untuk di-deploy ke Apps Script
-docs/           Panduan setup Spreadsheet/Apps Script dan deployment Vercel
-```
 
-## Mulai Menjalankan
+---
 
-### 1. Setup Backend (Spreadsheet + Apps Script)
+## 🛠️ Getting Started
 
-Ikuti panduan lengkap di [`docs/SETUP.md`](./docs/SETUP.md).
+### 1. Backend Setup (Spreadsheet + Apps Script)
 
-### 2. Install & Jalankan Frontend
+Follow the complete guide in [`docs/SETUP.md`](https://www.google.com/search?q=./docs/SETUP.md).
+
+### 2. Install & Run Frontend
 
 ```bash
 npm install
 cp .env.example .env.local
-# isi NEXT_PUBLIC_GAS_API_URL di .env.local dengan URL Apps Script Anda
+# Set NEXT_PUBLIC_GAS_API_URL in .env.local to your Apps Script deployment URL
 npm run dev
-```
-
-Buka [http://localhost:3000](http://localhost:3000).
-
-### 3. Deploy ke Production
-
-Ikuti panduan di [`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md) untuk deploy
-ke Vercel.
-
-## Cara Kerja Saldo
-
-Saldo **tidak disimpan** sebagai kolom di Spreadsheet. Setiap kali data
-dibutuhkan, backend menghitung:
 
 ```
-Saldo = Total Deposit − Total Withdrawal
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### 3. Production Deployment
+
+Follow the guide in [`docs/DEPLOYMENT.md`](https://www.google.com/search?q=./docs/DEPLOYMENT.md) to deploy to Vercel.
+
+---
+
+## 🧮 How Balances Work
+
+Balances are **not stored** as static columns in the Spreadsheet. Whenever data is required, the backend computes:
+
+```text
+Balance = Total Deposits − Total Withdrawals
+
 ```
 
-dari seluruh baris di sheet `Ledger`, difilter sesuai konteks (per siswa,
-per akun, per periode, dsb).
+across all rows in the `Ledger` sheet, filtered according to context (per student, per account, per period, etc.).
 
-## Desain
+---
 
-Identitas visual aplikasi terinspirasi dari buku kas sekolah: warna hijau
-tua ala sampul buku besar, aksen kuningan (brass) seperti stempel resmi,
-tipografi serif (Fraunces) untuk angka & judul, serta angka tabular
-(IBM Plex Mono) di seluruh tampilan nominal agar mudah dibaca dan dibandingkan.
+## 🎨 Design
 
-## Rencana Pengembangan (Future Scalability)
+The visual identity is inspired by traditional school accounting ledgers:
 
-Struktur project ini disiapkan agar mudah dikembangkan menjadi:
+* **Colors:** Dark green evoking classic ledger covers, and brass accents resembling official stamps.
+* **Typography:** Serif typography (**Fraunces**) for numbers and headings, paired with tabular numerals (**IBM Plex Mono**) across all monetary values for effortless readability and comparison.
 
-- Multi User Login & Role Admin
-- Multiple Schools / Kelas / Tahun Ajaran
-- Import Excel massal
-- Backup Spreadsheet otomatis
-- Audit Log
+---
 
-## Lisensi
+## 🔮 Future Scalability & Roadmap
 
-Proyek internal — sesuaikan lisensi sesuai kebutuhan sekolah Anda.
+This project structure is built to scale smoothly into:
+
+* Multi-user login & admin roles
+* Multiple schools / classes / academic years
+* Bulk Excel import
+* Automated Spreadsheet backups
+* Audit logs
+
+---
+
+## 📄 License
+
+Internal project — adapt the license according to your school's requirements.
+
+```
+
+```
