@@ -1,4 +1,4 @@
-```markdown
+ 
 # School Cash & Deposit
 
 A web application for managing student savings, class cash funds, and expenses, with all transactions recorded in a single **General Ledger** so that all reports originate from a single source of truth.
